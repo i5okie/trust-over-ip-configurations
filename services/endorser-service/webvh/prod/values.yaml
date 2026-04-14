@@ -91,9 +91,9 @@ endorser-service:
     argfile.yml:
       label: "Government of British Columbia - WebVH Endorser (prod)"
       endorser-protocol-role: endorser
-      requests-through-public-did: true
+      requests-through-public-did: false
       auto-promote-author-did: false
-      public-invites: true
+      public-invites: false
       notify-revocation: true
       monitor-revocation-notification: true
       wallet-name: webvh-endorser-agent-wallet

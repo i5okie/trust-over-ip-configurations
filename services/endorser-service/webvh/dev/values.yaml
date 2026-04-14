@@ -93,7 +93,7 @@ endorser-service:
       notify-revocation: true
       monitor-revocation-notification: true
       wallet-name: webvh-endorser-agent-wallet
-      wallet-type: askar
+      wallet-type: askar-anoncreds
       wallet-storage-type: postgres_storage
       read-only-ledger: false
       no-ledger: true

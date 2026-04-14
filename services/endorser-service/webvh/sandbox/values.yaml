@@ -60,7 +60,7 @@ endorser-service:
     webConcurrency: "2"
     environment: sandbox
     jwtAccessTokenExpireMinutes: 300
-    acapyAdminUrl: "https://endorser-agent-webvh-admin-sandbox.apps.silver.devops.gov.bc.ca"
+    acapyAdminUrl: "https://webvh-endorser-agent-admin-sandbox.apps.silver.devops.gov.bc.ca"
 
   secrets:
     api:
@@ -134,8 +134,8 @@ endorser-service:
 
     extraEnvVarsSecret: "webvh-endorser-sandbox-acapy-webhook"
 
-    agentUrl: "https://endorser-agent-webvh-sandbox.apps.silver.devops.gov.bc.ca"
-    adminUrl: "https://endorser-agent-webvh-admin-sandbox.apps.silver.devops.gov.bc.ca"
+    agentUrl: "https://webvh-endorser-agent-sandbox.apps.silver.devops.gov.bc.ca"
+    adminUrl: "https://webvh-endorser-agent-admin-sandbox.apps.silver.devops.gov.bc.ca"
 
     websockets:
       enabled: true
@@ -257,17 +257,17 @@ endorser-service:
         route.openshift.io/termination: edge
         haproxy.router.openshift.io/timeout: 60s
       hosts:
-        - host: endorser-agent-webvh-sandbox.apps.silver.devops.gov.bc.ca
+        - host: webvh-endorser-agent-sandbox.apps.silver.devops.gov.bc.ca
           paths:
             - path: /
               pathType: ImplementationSpecific
               servicePort: agent
-        - host: endorser-agent-webvh-admin-sandbox.apps.silver.devops.gov.bc.ca
+        - host: webvh-endorser-agent-admin-sandbox.apps.silver.devops.gov.bc.ca
           paths:
             - path: /
               pathType: ImplementationSpecific
               servicePort: admin
-        - host: endorser-api-webvh-sandbox.apps.silver.devops.gov.bc.ca
+        - host: webvh-endorser-service-sandbox.apps.silver.devops.gov.bc.ca
           paths:
             - path: /
               pathType: ImplementationSpecific

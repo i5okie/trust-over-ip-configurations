@@ -27,7 +27,7 @@ global:
     allowInsecureImages: true
 
 endorser-service:
-  fullnameOverride: "webvh-endorser"
+  fullnameOverride: "webvh-endorser-dev"
 
   # =============================================================================
   # Endorser API

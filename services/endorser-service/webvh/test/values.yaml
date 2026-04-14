@@ -95,7 +95,7 @@ endorser-service:
       wallet-name: webvh-endorser-agent-wallet
       wallet-type: askar-anoncreds
       wallet-storage-type: postgres_storage
-      read-only-ledger: false
+      # read-only-ledger: false  # WebVH: no Indy ledger; rely on chart/agent default
       no-ledger: true
       auto-provision: true
       emit-new-didcomm-prefix: true

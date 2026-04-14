@@ -1,24 +1,25 @@
 # =============================================================================
 # Helm Values Override: WebVH Endorser Service (Prod)
 # Chart: openwallet-foundation/endorser-service (version 1.0.0)
-# Release name: webvh-endorser-prod (example)
+# Release name: webvh-endorser (example; use prod OpenShift namespace / Argo app)
 #
 # There is no aries/prod values file — this layout mirrors aries/dev for
 # side-by-side comparison with webvh/dev and the same chart version.
+# fullnameOverride and secret names match webvh/dev — isolate prod by namespace.
 #
 # Deploy with:
-#   helm template webvh-endorser-prod endorser-service -f values.yaml
-#   helm install webvh-endorser-prod endorser-service -f values.yaml
+#   helm template webvh-endorser endorser-service -f values.yaml
+#   helm install webvh-endorser endorser-service -f values.yaml
 #
 # =============================================================================
 # REQUIRED PRE-CREATED SECRETS (before helm install):
 #
-# 1. webvh-endorser-prod-postgres (controller DB)
-# 2. webvh-endorser-prod-acapy-postgres (wallet DB)
-# 3. webvh-endorser-prod-api (endorser API)
-# 4. webvh-endorser-prod-acapy-api (ACA-Py agent)
-# 5. webvh-endorser-prod-acapy-seed (ACA-Py wallet seed)
-# 6. webvh-endorser-prod-acapy-webhook (optional webhook env)
+# 1. webvh-endorser-postgres (controller DB)
+# 2. webvh-endorser-acapy-postgres (wallet DB)
+# 3. webvh-endorser-api (endorser API)
+# 4. webvh-endorser-acapy-api (ACA-Py agent)
+# 5. webvh-endorser-acapy-seed (ACA-Py wallet seed)
+# 6. webvh-endorser-acapy-webhook (optional webhook env)
 # =============================================================================
 # WebVH vs Indy (aries/): no Hyperledger Indy pool — ACA-Py uses the webvh
 # plugin and plugin-config.yml.webvh.server_url only.
@@ -30,7 +31,7 @@ global:
     allowInsecureImages: true
 
 endorser-service:
-  fullnameOverride: "webvh-endorser-prod"
+  fullnameOverride: "webvh-endorser"
 
   # =============================================================================
   # Endorser API
@@ -67,7 +68,7 @@ endorser-service:
 
   secrets:
     api:
-      existingSecret: "webvh-endorser-prod-api"
+      existingSecret: "webvh-endorser-api"
       keys:
         endorserAdminApiKey: endorser-admin-api-key
         webhookApiKey: webhook-api-key
@@ -120,18 +121,18 @@ endorser-service:
 
     secrets:
       api:
-        existingSecret: "webvh-endorser-prod-acapy-api"
+        existingSecret: "webvh-endorser-acapy-api"
         secretKeys:
           adminApiKey: adminApiKey
           walletKey: walletKey
           jwtKey: jwt
       seed:
         enabled: true
-        existingSecret: "webvh-endorser-prod-acapy-seed"
+        existingSecret: "webvh-endorser-acapy-seed"
         secretKeys:
           seed: seed
 
-    extraEnvVarsSecret: "webvh-endorser-prod-acapy-webhook"
+    extraEnvVarsSecret: "webvh-endorser-acapy-webhook"
 
     agentUrl: "https://endorser-agent-webvh.apps.silver.devops.gov.bc.ca"
     adminUrl: "https://endorser-agent-webvh-admin.apps.silver.devops.gov.bc.ca"
@@ -183,11 +184,11 @@ endorser-service:
       nameOverride: acapy-postgres
       targetPlatform: "openshift"
       auth:
-        existingSecret: "webvh-endorser-prod-acapy-postgres"
+        existingSecret: "webvh-endorser-acapy-postgres"
         secretKeys:
           adminPasswordKey: postgres-password
       customUser:
-        existingSecret: "webvh-endorser-prod-acapy-postgres"
+        existingSecret: "webvh-endorser-acapy-postgres"
         database: "default_wallet"
         name: "User_WebVhPrdW"
         secretKeys:
@@ -211,11 +212,11 @@ endorser-service:
     enabled: true
     targetPlatform: "openshift"
     auth:
-      existingSecret: "webvh-endorser-prod-postgres"
+      existingSecret: "webvh-endorser-postgres"
       secretKeys:
         adminPasswordKey: postgres-password
     customUser:
-      existingSecret: "webvh-endorser-prod-postgres"
+      existingSecret: "webvh-endorser-postgres"
       database: "endorser_controller_db"
       name: "User_WebVhPrdC"
       secretKeys:

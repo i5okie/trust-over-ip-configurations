@@ -77,19 +77,19 @@ vc-authn-oidc:
       auto-respond-credential-offer: true
       auto-respond-messages: true
       auto-verify-presentation: true
-      preserve-exchange-records: true
+      debug-webhooks: true
       genesis-transactions-list: /tmp/ledgers.yml
       log-level: info
       monitor-ping: true
       multitenant-admin: false
       multitenant: false
+      preserve-exchange-records: false
       public-invites: true
       read-only-ledger: true
       wallet-name: askar-wallet
       wallet-storage-type: postgres_storage
       wallet-type: askar
       webhook-url: https://vc-authn-oidc-dev.apps.silver.devops.gov.bc.ca/webhooks
-      plugin: []
     ledgers.yml:
       - id: BCovrinTest
         is_production: true
@@ -104,6 +104,9 @@ vc-authn-oidc:
       - id: CANdyProd
         is_production: true
         genesis_url: "https://raw.githubusercontent.com/ICCS-ISAC/dtrust-reconu/main/CANdy/prod/pool_transactions_genesis"
+    plugin-config.yml: |
+      webvh:
+        server_url: https://registry-dev.digitaltrust.gov.bc.ca
     secrets:
       api:
         existingSecret: "vc-authn-oidc-agent-api"
@@ -111,13 +114,37 @@ vc-authn-oidc:
         existingSecret: "vc-authn-oidc-agent-seed"
     networkPolicy:
       enabled: true
-    postgresql:
+    postgres:
       auth:
         existingSecret: "vc-authn-oidc-postgresql"
+      extraObjects:
+      - |
+        apiVersion: networking.k8s.io/v1
+        kind: NetworkPolicy
+        metadata:
+          name: {{ include "postgres.fullname" . }}
+          namespace: {{ .Release.Namespace }}
+          labels:
+            {{- include "postgres.labels" . | nindent 4 }}
+        spec:
+          podSelector:
+            matchLabels:
+              {{- include "postgres.selectorLabels" . | nindent 6 }}
+          policyTypes:
+            - Ingress
+            - Egress
+          egress:
+            - {}
+          ingress:
+            - ports:
+                - port: {{ .Values.service.port | default 5432 }}
+                  protocol: TCP
   cleanup:
     cronjob:
       enabled: true
       schedule: "0 * * * *"
+  siem:
+    existingSecret: "vc-authn-oidc-siem"
   mongodb:
     image:
       registry: artifacts.developer.gov.bc.ca/docker-remote

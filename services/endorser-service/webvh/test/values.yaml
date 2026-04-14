@@ -48,8 +48,8 @@ endorser-service:
       memory: 256Mi
 
   api:
-    publicName: "BC Endorser Service (test)"
-    publicDesc: "An endorser service for BC issuer agents"
+    publicName: "BC WebVH Endorser Service (test)"
+    publicDesc: "WebVH (did:webvh) endorser for BC issuer agents."
     adminUser: endorser-admin
     logLevel: INFO
     autoAcceptConnections: false
@@ -85,7 +85,7 @@ endorser-service:
       tag: "1.1.2"
 
     argfile.yml:
-      label: "Government of British Columbia - WebVH Endorser"
+      label: "Government of British Columbia — WebVH Endorser (test)"
       endorser-protocol-role: endorser
       requests-through-public-did: true
       auto-promote-author-did: false

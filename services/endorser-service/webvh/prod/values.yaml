@@ -89,7 +89,7 @@ endorser-service:
       tag: "1.1.2"
 
     argfile.yml:
-      label: "Government of British Columbia — WebVH Endorser (prod)"
+      label: "Government of British Columbia - WebVH Endorser (prod)"
       endorser-protocol-role: endorser
       requests-through-public-did: true
       auto-promote-author-did: false

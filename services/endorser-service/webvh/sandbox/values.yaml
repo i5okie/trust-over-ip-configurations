@@ -89,7 +89,7 @@ endorser-service:
       auto-accept-invites: false
       auto-accept-requests: false
       debug-webhooks: true
-      label: "Government of British Columbia — WebVH Sandbox Endorser"
+      label: "Government of British Columbia - WebVH Sandbox Endorser"
       endorser-protocol-role: endorser
       requests-through-public-did: true
       auto-promote-author-did: false

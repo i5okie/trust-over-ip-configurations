@@ -96,7 +96,7 @@ traction:
     resources:
       limits:
         memory: 500Mi
-    postgresql:
+    postgres:
       enabled: false
 
   tenant_proxy:
@@ -109,7 +109,7 @@ traction:
         enabled: true
         namespaceSelector:
           network.openshift.io/policy-group: ingress
-    
+
     autoscaling:
       enabled: true
       minReplicas: 1

@@ -97,7 +97,7 @@ traction:
         cpu: 250m
         memory: 250Mi
 
-    postgresql:
+    postgres:
       enabled: false
 
   tenant_proxy:

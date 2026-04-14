@@ -67,7 +67,7 @@ endorser-service:
     image:
       registry: ghcr.io
       repository: openwallet-foundation/acapy-endorser-service/agent
-      tag: "1.1.2"
+      tag: "1.1.3"
 
     argfile.yml:
       # Overrides the auto-generated label (fullname) in the configmap.

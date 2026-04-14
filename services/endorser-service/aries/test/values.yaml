@@ -78,7 +78,7 @@ endorser-service:
     image:
       registry: ghcr.io
       repository: openwallet-foundation/acapy-endorser-service/agent
-      tag: "1.1.2"
+      tag: "1.1.3"
 
     argfile.yml:
       label: "Government of British Columbia - Endorser"

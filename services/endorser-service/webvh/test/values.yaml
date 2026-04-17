@@ -1,20 +1,24 @@
 # =============================================================================
-# Helm Values Override: Aries Endorser Service (Dev)
+# Helm Values Override: WebVH Endorser Service (Test)
 # Chart: openwallet-foundation/endorser-service (version 1.0.0)
-# Release name: aries-endorser
+# Release name: webvh-endorser (example)
 #
 # Deploy with:
-#   helm template aries-endorser endorser-service -f aries-endorser-dev.values.yaml
-#   helm install aries-endorser endorser-service -f aries-endorser-dev.values.yaml
+#   helm template webvh-endorser endorser-service -f values.yaml
+#   helm install webvh-endorser endorser-service -f values.yaml
 #
 # =============================================================================
 # REQUIRED PRE-CREATED SECRETS (before helm install):
 #
-# 1. aries-endorser-postgres (controller DB)
-# 2. aries-endorser-acapy-postgres (wallet DB)
-# 3. aries-endorser-api (endorser API)
-# 4. aries-endorser-acapy-api (ACA-Py agent)
-# 5. aries-endorser-acapy-seed (ACA-Py wallet seed)
+# 1. webvh-endorser-postgres (controller DB)
+# 2. webvh-endorser-acapy-postgres (wallet DB)
+# 3. webvh-endorser-api (endorser API)
+# 4. webvh-endorser-acapy-api (ACA-Py agent)
+# 5. webvh-endorser-acapy-seed (ACA-Py wallet seed)
+# 6. webvh-endorser-acapy-webhook (optional webhook env)
+# =============================================================================
+# WebVH vs Indy (aries/): no Hyperledger Indy pool — ACA-Py uses the webvh
+# plugin and plugin-config.yml.webvh.server_url only.
 # =============================================================================
 
 global:
@@ -23,7 +27,7 @@ global:
     allowInsecureImages: true
 
 endorser-service:
-  fullnameOverride: "aries-endorser"
+  fullnameOverride: "webvh-endorser-test"
 
   # =============================================================================
   # Endorser API
@@ -44,8 +48,8 @@ endorser-service:
       memory: 256Mi
 
   api:
-    publicName: "BC Endorser Service (dev)"
-    publicDesc: "An endorser service for BC issuer agents"
+    publicName: "BC WebVH Endorser Service (test)"
+    publicDesc: "WebVH (did:webvh) endorser for BC issuer agents."
     adminUser: endorser-admin
     logLevel: INFO
     autoAcceptConnections: false
@@ -56,11 +60,11 @@ endorser-service:
     webConcurrency: "2"
     environment: test
     jwtAccessTokenExpireMinutes: 300
-    acapyAdminUrl: "https://aries-endorser-agent-admin-test.apps.silver.devops.gov.bc.ca"
+    acapyAdminUrl: "https://webvh-endorser-agent-admin-test.apps.silver.devops.gov.bc.ca"
 
   secrets:
     api:
-      existingSecret: "aries-endorser-api"
+      existingSecret: "webvh-endorser-api"
       keys:
         endorserAdminApiKey: endorser-admin-api-key
         webhookApiKey: webhook-api-key
@@ -81,35 +85,31 @@ endorser-service:
       tag: "1.1.3"
 
     argfile.yml:
-      auto-accept-invites: false
-      auto-accept-requests: false
-      label: "Government of British Columbia - Endorser"
+      label: "Government of British Columbia - WebVH Endorser (test)"
       endorser-protocol-role: endorser
-      requests-through-public-did: true
+      requests-through-public-did: false
       auto-promote-author-did: false
-      public-invites: true
+      public-invites: false
       notify-revocation: true
       monitor-revocation-notification: true
-      wallet-name: aries-endorser-agent-wallet
-      wallet-type: askar
+      wallet-name: webvh-endorser-agent-wallet
+      wallet-type: askar-anoncreds
       wallet-storage-type: postgres_storage
-      read-only-ledger: false
-      no-ledger: false
+      # read-only-ledger: false  # WebVH: no Indy ledger; rely on chart/agent default
+      no-ledger: true
       auto-provision: true
       emit-new-didcomm-prefix: true
       auto-ping-connection: true
       monitor-ping: true
       log-level: WARNING
-      plugin: []
+      plugin:
+        - webvh
 
-    ledgers.yml:
-      - id: CANdy Test
-        is_production: false
-        is_write: true
-        genesis_url: "https://raw.githubusercontent.com/ICCS-ISAC/dtrust-reconu/main/CANdy/test/pool_transactions_genesis"
+    ledgers.yml: []
 
     plugin-config.yml:
-      did-webvh: null
+      webvh:
+        server_url: "https://registry-test.digitaltrust.gov.bc.ca"
 
     walletStorageConfig:
       max_connections: 5
@@ -117,21 +117,21 @@ endorser-service:
 
     secrets:
       api:
-        existingSecret: "aries-endorser-acapy-api"
+        existingSecret: "webvh-endorser-acapy-api"
         secretKeys:
           adminApiKey: adminApiKey
           walletKey: walletKey
           jwtKey: jwt
       seed:
         enabled: true
-        existingSecret: "aries-endorser-acapy-seed"
+        existingSecret: "webvh-endorser-acapy-seed"
         secretKeys:
           seed: seed
 
-    extraEnvVarsSecret: "aries-endorser-acapy-webhook"
+    extraEnvVarsSecret: "webvh-endorser-acapy-webhook"
 
-    agentUrl: "https://aries-endorser-agent-test.apps.silver.devops.gov.bc.ca"
-    adminUrl: "https://aries-endorser-agent-admin-test.apps.silver.devops.gov.bc.ca"
+    agentUrl: "https://webvh-endorser-agent-test.apps.silver.devops.gov.bc.ca"
+    adminUrl: "https://webvh-endorser-agent-admin-test.apps.silver.devops.gov.bc.ca"
 
     websockets:
       enabled: true
@@ -182,20 +182,17 @@ endorser-service:
       nameOverride: acapy-postgres
       targetPlatform: "openshift"
       auth:
-        existingSecret: "aries-endorser-acapy-postgres"
+        existingSecret: "webvh-endorser-acapy-postgres"
         secretKeys:
           adminPasswordKey: postgres-password
       customUser:
-        existingSecret: "aries-endorser-acapy-postgres"
-        customUser:
+        existingSecret: "webvh-endorser-acapy-postgres"
         database: "default_wallet"
-        name: "User_BINgSSI2"
+        name: "User_WebVhTstW"
         secretKeys:
           name: user
           database: database
           password: password
-      # To retain DB data explicitly
-      # resources, limits, PVC sizes map to defaults or open-ended specs unless overridden.
       persistence:
         size: 1Gi
       resources:
@@ -213,13 +210,13 @@ endorser-service:
     enabled: true
     targetPlatform: "openshift"
     auth:
-      existingSecret: "aries-endorser-postgres"
+      existingSecret: "webvh-endorser-postgres"
       secretKeys:
         adminPasswordKey: postgres-password
     customUser:
-      existingSecret: "aries-endorser-postgres"
+      existingSecret: "webvh-endorser-postgres"
       database: "endorser_controller_db"
-      name: "User_gzZXIdbp"
+      name: "User_WebVhTstC"
       secretKeys:
         name: user
         database: database
@@ -236,8 +233,6 @@ endorser-service:
     config:
       postgresql:
         max_connections: 500
-
-
 
   # =============================================================================
   # Caddy Reverse Proxy
@@ -260,17 +255,17 @@ endorser-service:
         route.openshift.io/termination: edge
         haproxy.router.openshift.io/timeout: 60s
       hosts:
-        - host: aries-endorser-agent-test.apps.silver.devops.gov.bc.ca
+        - host: webvh-endorser-agent-test.apps.silver.devops.gov.bc.ca
           paths:
             - path: /
               pathType: ImplementationSpecific
               servicePort: agent
-        - host: aries-endorser-agent-admin-test.apps.silver.devops.gov.bc.ca
+        - host: webvh-endorser-agent-admin-test.apps.silver.devops.gov.bc.ca
           paths:
             - path: /
               pathType: ImplementationSpecific
               servicePort: admin
-        - host: aries-endorser-service-test.apps.silver.devops.gov.bc.ca
+        - host: webvh-endorser-service-test.apps.silver.devops.gov.bc.ca
           paths:
             - path: /
               pathType: ImplementationSpecific

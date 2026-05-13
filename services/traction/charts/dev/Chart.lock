@@ -1,6 +1,0 @@
-dependencies:
-- name: traction
-  repository: https://bcgov.github.io/traction
-  version: 0.3.8
-digest: sha256:0a884613dcf887c19e816f353082fb41e773710481fb7c9c227fbaa0ce11b577
-generated: "2025-09-15T14:23:58.0532-07:00"

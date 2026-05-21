@@ -75,7 +75,26 @@ jobs:
       - name: Run Your Job
         run: |
           echo "This job runs biweekly on 1st and 15th of every month at 2:00 AM PST"
-      
+
+      - name: Create GitHub App token for GitOps repo
+        uses: actions/create-github-app-token@v3
+        id: app-token
+        with:
+          client-id: ${{ vars.TEAM_CDT_GITHUB_APP_ID }}
+          private-key: ${{ secrets.TEAM_CDT_GITHUB_APP_PRIVATE_KEY }}
+          owner: bcgov-c
+          repositories: ministry-gitops-ditp
+
+      - name: Checkout GitOps repo (values files)
+        uses: actions/checkout@v6
+        with:
+          repository: bcgov-c/ministry-gitops-ditp
+          token: ${{ steps.app-token.outputs.token }}
+          sparse-checkout: |
+            services/traction/sandbox
+            services/didwebvh-server-py/sandbox
+          path: ministry-gitops-ditp
+
       - name: Install OpenShift CLI tools
         uses: redhat-actions/openshift-tools-installer@v1
         with:
@@ -87,16 +106,16 @@ jobs:
           openshift_server_url: ${{ secrets.OPENSHIFT_SERVER }}
           openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
           namespace: ${{ secrets.OPENSHIFT_NAMESPACE_SANDBOX }}
-      
+
       - name: Compile banner message
         run: echo "BANNER_MESSAGE=$($GITHUB_WORKSPACE/src/bash/reset-sandbox-date.sh)" >> $GITHUB_ENV
 
       - name: Install Traction via Helm
         run: |
-          helm repo add traction https://bcgov.github.io/traction 
+          helm repo add traction https://bcgov.github.io/traction
           helm upgrade --install \
           -n ${{ secrets.OPENSHIFT_NAMESPACE_SANDBOX }} --wait --timeout=10m \
-          -f ./services/traction/sandbox/values.yaml \
+          -f $GITHUB_WORKSPACE/ministry-gitops-ditp/services/traction/sandbox/values.yaml \
           --set ui.ux.infoBanner.message="${BANNER_MESSAGE}" \
           traction-sandbox traction/traction
 
@@ -105,7 +124,7 @@ jobs:
           helm repo add didwebvh-server-py ${{ vars.DIDWEBVH_HELM_REPO_URL }}
           helm upgrade --install \
           -n ${{ secrets.OPENSHIFT_NAMESPACE_SANDBOX }} --wait --timeout=10m \
-          -f ./services/didwebvh-server-py/sandbox/values.yaml \
+          -f $GITHUB_WORKSPACE/ministry-gitops-ditp/services/didwebvh-server-py/sandbox/values.yaml \
           --set ui.ux.infoBanner.message="${BANNER_MESSAGE}" \
           didwebvh-server-py-sandbox didwebvh-server-py/didwebvh-server-py
 

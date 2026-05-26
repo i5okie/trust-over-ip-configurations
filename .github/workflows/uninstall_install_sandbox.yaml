@@ -22,7 +22,7 @@ jobs:
       - name: Run Your Job
         run: |
           echo "This job runs biweekly on 1st and 15th of every month at 2:00 AM PST"
-      
+
       - name: Install OpenShift CLI tools
         uses: redhat-actions/openshift-tools-installer@v1
         with:
@@ -137,5 +137,5 @@ jobs:
           mention: "here"
           mention_if: "failure"
           channel: "#ditp-gha-notifications"
-          url: ${{ secrets.ROCKETCHAT_WEBHOOK }}
+          url: ${{ secrets.TEAMS_WEBHOOK }}
           commit: true
